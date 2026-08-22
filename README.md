@@ -44,3 +44,6 @@ a `webparts.db` SQLite file dropped next to the `.csproj`, for pulling
 in reusable HTML snippets from an external library. The reading code
 exists but nothing in the UI calls it right now — it's there for when
 that workflow gets revisited.
+
+<img width="1188" height="689" alt="image" src="https://github.com/user-attachments/assets/bbe01c57-02ed-4c99-a218-61561e07ea90" />
+
