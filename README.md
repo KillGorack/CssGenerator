@@ -37,4 +37,5 @@ cd CssGenerator
 dotnet run
 ```
 
-<img width="1188" height="689" alt="image" src="https://github.com/user-attachments/assets/bbe01c57-02ed-4c99-a218-61561e07ea90" />
+<img width="1254" height="728" alt="image" src="https://github.com/user-attachments/assets/c48e6a94-6c23-4c7a-979d-63bb6461c5a4" />
+
