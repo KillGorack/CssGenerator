@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Platform.Storage;
@@ -212,6 +213,29 @@ public partial class MainWindow : Window
         UpdateClassList();
         UpdatePropertyPanel();
         UpdateCss();
+    }
+
+    private void ClassSearchBox_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+        {
+            return;
+        }
+
+        var query = ClassSearchBox.Text;
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return;
+        }
+
+        var index = _project.Classes.FindIndex(c =>
+            c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        if (index >= 0)
+        {
+            ClassList.SelectedIndex = index;
+        }
     }
 
     private void AddClass_Click(object? sender, RoutedEventArgs e)

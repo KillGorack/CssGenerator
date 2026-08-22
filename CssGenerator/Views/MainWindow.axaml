@@ -58,15 +58,26 @@
                         Margin="0,0,0,10"
                         Click="AddClass_Click"/>
 
-                <Border Grid.Row="1"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1"
-                        Padding="8">
+                <Grid Grid.Row="1"
+                      RowDefinitions="Auto,*">
 
-                    <ListBox x:Name="ClassList"
-                             SelectionChanged="ClassList_SelectionChanged"/>
+                    <TextBox x:Name="ClassSearchBox"
+                             Grid.Row="0"
+                             Margin="0,0,0,8"
+                             PlaceholderText="Search classes (Enter)"
+                             KeyDown="ClassSearchBox_KeyDown"/>
 
-                </Border>
+                    <Border Grid.Row="1"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            Padding="8">
+
+                        <ListBox x:Name="ClassList"
+                                 SelectionChanged="ClassList_SelectionChanged"/>
+
+                    </Border>
+
+                </Grid>
 
 
                 <!-- Selected class -->
