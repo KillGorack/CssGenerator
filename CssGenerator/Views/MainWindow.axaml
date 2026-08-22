@@ -73,7 +73,15 @@
                             Padding="8">
 
                         <ListBox x:Name="ClassList"
-                                 SelectionChanged="ClassList_SelectionChanged"/>
+                                 SelectionChanged="ClassList_SelectionChanged">
+
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Delete Class" Click="DeleteClass_Click"/>
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+
+                        </ListBox>
 
                     </Border>
 

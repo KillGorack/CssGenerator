@@ -238,6 +238,23 @@ public partial class MainWindow : Window
         }
     }
 
+    private void DeleteClass_Click(object? sender, RoutedEventArgs e)
+    {
+        if (ClassList.SelectedIndex < 0 ||
+            ClassList.SelectedIndex >= _project.Classes.Count)
+        {
+            return;
+        }
+
+        _project.Classes.RemoveAt(ClassList.SelectedIndex);
+
+        ClassNameEditor.Text = string.Empty;
+
+        UpdateClassList();
+        UpdatePropertyPanel();
+        UpdateCss();
+    }
+
     private void AddClass_Click(object? sender, RoutedEventArgs e)
     {
         var number = _project.Classes.Count + 1;
