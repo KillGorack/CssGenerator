@@ -24,6 +24,8 @@
                     <MenuItem Header="Open" Click="Open_Click"/>
                     <MenuItem Header="Save" Click="Save_Click"/>
                     <MenuItem Header="Save As" Click="SaveAs_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Import CSS" Click="ImportCss_Click"/>
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <MenuItem Header="Export CSS" Click="ExportCss_Click"/>

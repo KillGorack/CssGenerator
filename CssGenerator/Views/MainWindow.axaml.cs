@@ -175,6 +175,45 @@ public partial class MainWindow : Window
         File.WriteAllText(path, CssBuilder.BuildMinified(_project));
     }
 
+    private async void ImportCss_Click(object? sender, RoutedEventArgs e)
+    {
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Import CSS",
+            AllowMultiple = false,
+            FileTypeFilter = new[] { CssFileType }
+        });
+
+        var path = files.Count > 0 ? files[0].TryGetLocalPath() : null;
+
+        if (path is null)
+        {
+            return;
+        }
+
+        var dialog = new ConfirmDialog(
+            "Import CSS",
+            "This action will remove the classes currently in your session. Are you sure?");
+
+        var confirmed = await dialog.ShowDialog<bool>(this);
+
+        if (!confirmed)
+        {
+            return;
+        }
+
+        var classes = CssImporter.Parse(File.ReadAllText(path));
+
+        _project.Classes.Clear();
+        _project.Classes.AddRange(classes);
+
+        ClassNameEditor.Text = string.Empty;
+
+        UpdateClassList();
+        UpdatePropertyPanel();
+        UpdateCss();
+    }
+
     private void AddClass_Click(object? sender, RoutedEventArgs e)
     {
         var number = _project.Classes.Count + 1;
