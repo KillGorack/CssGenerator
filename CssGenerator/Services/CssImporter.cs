@@ -24,12 +24,22 @@ public static class CssImporter
 
                 var cssClass = new CssClass { Name = name };
 
-                foreach (var property in rule.Style)
+                foreach (var declaration in rule.Style.CssText.Split(';'))
                 {
+                    var trimmed = declaration.Trim();
+
+                    if (string.IsNullOrWhiteSpace(trimmed))
+                        continue;
+
+                    var colonIndex = trimmed.IndexOf(':');
+
+                    if (colonIndex < 0)
+                        continue;
+
                     cssClass.Properties.Add(new CssProperty
                     {
-                        Name = property.Name,
-                        Value = property.Value
+                        Name = trimmed.Substring(0, colonIndex).Trim(),
+                        Value = trimmed.Substring(colonIndex + 1).Trim()
                     });
                 }
 

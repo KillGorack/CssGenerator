@@ -43,6 +43,8 @@ public partial class MainWindow : Window
         ClassList.SelectionChanged += ClassList_SelectionChanged;
         ClassNameEditor.TextChanged += ClassNameEditor_TextChanged;
         AddPropertyButton.Click += AddProperty_Click;
+        HtmlEditor.AddHandler(InputElement.KeyDownEvent, HtmlEditor_KeyDown, RoutingStrategies.Tunnel);
+        KeyDown += MainWindow_KeyDown;
 
         UpdateClassList();
         UpdateCss();
@@ -512,6 +514,114 @@ public partial class MainWindow : Window
         var snippet = _project.HtmlSnippets[SnippetSelector.SelectedIndex];
 
         snippet.Html = HtmlEditor.Text ?? string.Empty;
+    }
+
+    private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            return;
+        }
+
+        var shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
+
+        switch (e.Key)
+        {
+            case Key.S when shift:
+                SaveAs_Click(this, new RoutedEventArgs());
+                e.Handled = true;
+                break;
+
+            case Key.S:
+                Save_Click(this, new RoutedEventArgs());
+                e.Handled = true;
+                break;
+
+            case Key.N:
+                New_Click(this, new RoutedEventArgs());
+                e.Handled = true;
+                break;
+
+            case Key.O:
+                Open_Click(this, new RoutedEventArgs());
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private void HtmlEditor_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Tab)
+        {
+            return;
+        }
+
+        e.Handled = true;
+
+        var text = HtmlEditor.Text ?? string.Empty;
+        var start = Math.Min(HtmlEditor.SelectionStart, HtmlEditor.SelectionEnd);
+        var end = Math.Max(HtmlEditor.SelectionStart, HtmlEditor.SelectionEnd);
+        var outdent = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
+
+        if (start == end && !outdent)
+        {
+            HtmlEditor.Text = text.Insert(start, "    ");
+            HtmlEditor.SelectionStart = HtmlEditor.SelectionEnd = start + 4;
+            return;
+        }
+
+        var lineStart = start == 0 ? 0 : text.LastIndexOf('\n', start - 1) + 1;
+
+        var lineEndSearchFrom = end > start ? end - 1 : end;
+        var nextNewline = text.IndexOf('\n', lineEndSearchFrom);
+        var lineEnd = nextNewline < 0 ? text.Length : nextNewline;
+
+        var block = text.Substring(lineStart, lineEnd - lineStart);
+        var lines = block.Split('\n');
+        var newLines = new string[lines.Length];
+        var firstLineRemoved = 0;
+
+        for (var i = 0; i < lines.Length; i++)
+        {
+            if (outdent)
+            {
+                var removeCount = 0;
+
+                while (removeCount < 4 &&
+                       removeCount < lines[i].Length &&
+                       lines[i][removeCount] == ' ')
+                {
+                    removeCount++;
+                }
+
+                newLines[i] = lines[i].Substring(removeCount);
+
+                if (i == 0)
+                {
+                    firstLineRemoved = removeCount;
+                }
+            }
+            else
+            {
+                newLines[i] = "    " + lines[i];
+            }
+        }
+
+        var newBlock = string.Join("\n", newLines);
+        var lengthDelta = newBlock.Length - block.Length;
+
+        HtmlEditor.Text = text.Substring(0, lineStart) + newBlock + text.Substring(lineEnd);
+
+        if (outdent)
+        {
+            HtmlEditor.SelectionStart = Math.Max(lineStart, start - firstLineRemoved);
+            HtmlEditor.SelectionEnd = Math.Max(HtmlEditor.SelectionStart, end + lengthDelta);
+        }
+        else
+        {
+            HtmlEditor.SelectionStart = start + 4;
+            HtmlEditor.SelectionEnd = end + lengthDelta;
+        }
     }
 
     private void UpdateSnippetList()

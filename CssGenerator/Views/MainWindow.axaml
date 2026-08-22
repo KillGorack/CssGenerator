@@ -20,10 +20,10 @@
 
             <Menu>
                 <MenuItem Header="_File">
-                    <MenuItem Header="New" Click="New_Click"/>
-                    <MenuItem Header="Open" Click="Open_Click"/>
-                    <MenuItem Header="Save" Click="Save_Click"/>
-                    <MenuItem Header="Save As" Click="SaveAs_Click"/>
+                    <MenuItem Header="New" InputGesture="Ctrl+N" Click="New_Click"/>
+                    <MenuItem Header="Open" InputGesture="Ctrl+O" Click="Open_Click"/>
+                    <MenuItem Header="Save" InputGesture="Ctrl+S" Click="Save_Click"/>
+                    <MenuItem Header="Save As" InputGesture="Ctrl+Shift+S" Click="SaveAs_Click"/>
                     <Separator/>
                     <MenuItem Header="Import CSS" Click="ImportCss_Click"/>
                 </MenuItem>
@@ -181,6 +181,7 @@
                              Grid.Row="2"
                              Classes="code"
                              AcceptsReturn="True"
+                             AcceptsTab="True"
                              TextWrapping="NoWrap"
                              VerticalContentAlignment="Top"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
