@@ -10,49 +10,29 @@
     <Grid RowDefinitions="Auto,*"
           ColumnDefinitions="360,*">
 
-        <!-- TOP BAR -->
+        <!-- MENU BAR -->
 
         <Border Grid.Row="0"
                 Grid.ColumnSpan="2"
                 Background="White"
-                Padding="20,14"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,0,0,1">
 
-            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
-
-                <TextBlock Text="CssGenerator"
-                           FontSize="20"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center"/>
-
-                <Button Grid.Column="1"
-                        Content="New"
-                        Margin="8,0,0,0"
-                        Padding="16,7"
-                        Click="New_Click"/>
-
-                <Button Grid.Column="2"
-                        Content="Open"
-                        Margin="8,0,0,0"
-                        Padding="16,7"
-                        Click="Open_Click"/>
-
-                <Button Grid.Column="3"
-                        Classes="accent"
-                        Content="Save"
-                        Margin="12,0,0,0"
-                        Padding="16,7"
-                        Click="Save_Click"/>
-
-                <Button Grid.Column="4"
-                        Classes="accent"
-                        Content="Open in Browser"
-                        Margin="8,0,0,0"
-                        Padding="16,7"
-                        Click="OpenPreview_Click"/>
-
-            </Grid>
+            <Menu>
+                <MenuItem Header="_File">
+                    <MenuItem Header="New" Click="New_Click"/>
+                    <MenuItem Header="Open" Click="Open_Click"/>
+                    <MenuItem Header="Save" Click="Save_Click"/>
+                    <MenuItem Header="Save As" Click="SaveAs_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Export">
+                    <MenuItem Header="Export CSS" Click="ExportCss_Click"/>
+                    <MenuItem Header="Export Minified CSS" Click="ExportMinifiedCss_Click"/>
+                </MenuItem>
+                <MenuItem Header="_View">
+                    <MenuItem Header="Open in Browser" Click="OpenPreview_Click"/>
+                </MenuItem>
+            </Menu>
         </Border>
 
 
@@ -69,24 +49,28 @@
                 <!-- Classes -->
 
                 <Button Grid.Row="0"
-                        Classes="accent"
+                        Classes="primary"
                         Content="+ Add Class"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
                         Margin="0,0,0,10"
                         Click="AddClass_Click"/>
 
-                <ListBox x:Name="ClassList"
-                         Grid.Row="1"
-                         SelectionChanged="ClassList_SelectionChanged"/>
+                <Border Grid.Row="1"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        Padding="8">
+
+                    <ListBox x:Name="ClassList"
+                             SelectionChanged="ClassList_SelectionChanged"/>
+
+                </Border>
 
 
                 <!-- Selected class -->
 
-                <TextBlock Grid.Row="2"
-                           Classes="section-header"
-                           Text="SELECTED CLASS"
-                           Margin="0,16,0,8"/>
+                <Separator Grid.Row="2"
+                           Margin="0,10"/>
 
                 <TextBox x:Name="ClassNameEditor"
                         Grid.Row="3"
@@ -96,37 +80,16 @@
                 <!-- Properties -->
 
                 <Grid Grid.Row="4"
-                      RowDefinitions="Auto,Auto,*">
+                      RowDefinitions="Auto,*">
 
-                    <Grid ColumnDefinitions="*,Auto"
-                          Margin="0,18,0,0">
+                    <Button x:Name="AddPropertyButton"
+                            Classes="primary"
+                            Content="+ Add Property"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Margin="0,10,0,10"/>
 
-                        <TextBlock Classes="section-header"
-                                   Text="PROPERTIES"
-                                   VerticalAlignment="Center"/>
-
-                        <Button x:Name="AddPropertyButton"
-                                Grid.Column="1"
-                                Classes="accent"
-                                Content="Add"/>
-
-                    </Grid>
-
-                    <Grid Grid.Row="1"
-                          ColumnDefinitions="*,*,28"
-                          ColumnSpacing="6"
-                          Margin="0,10,0,6">
-
-                        <TextBlock Classes="hint"
-                                   Text="Property"/>
-
-                        <TextBlock Grid.Column="1"
-                                   Classes="hint"
-                                   Text="Value"/>
-
-                    </Grid>
-
-                    <ScrollViewer Grid.Row="2"
+                    <ScrollViewer Grid.Row="1"
                                   VerticalScrollBarVisibility="Auto">
 
                         <StackPanel x:Name="PropertyPanel"
@@ -166,7 +129,7 @@
                                   SelectionChanged="SnippetSelector_SelectionChanged"/>
 
                         <Button Grid.Column="1"
-                                Classes="accent"
+                                Classes="primary"
                                 Content="Add"
                                 MinWidth="120"
                                 HorizontalContentAlignment="Center"
@@ -184,7 +147,7 @@
                                  TextChanged="SnippetNameEditor_TextChanged"/>
 
                         <Button Grid.Column="1"
-                                Classes="accent"
+                                Classes="primary"
                                 Content="Delete"
                                 MinWidth="120"
                                 HorizontalContentAlignment="Center"
@@ -214,19 +177,10 @@
                     Classes="card"
                     Padding="16">
 
-                <Grid RowDefinitions="Auto,*">
-
-                    <Button x:Name="ExportCssButton"
-                            Grid.Row="0"
-                            Classes="accent"
-                            Content="Export CSS"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Center"
-                            Margin="0,0,0,10"
-                            Click="ExportCss_Click"/>
+                <Grid RowDefinitions="*">
 
                     <TextBox x:Name="CssEditor"
-                             Grid.Row="1"
+                             Grid.Row="0"
                              Classes="code"
                              IsReadOnly="True"
                              AcceptsReturn="True"

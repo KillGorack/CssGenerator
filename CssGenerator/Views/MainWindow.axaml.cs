@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -97,20 +98,7 @@ public partial class MainWindow : Window
 
     private async void Save_Click(object? sender, RoutedEventArgs e)
     {
-        var path = _currentFilePath;
-
-        if (path is null)
-        {
-            var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-            {
-                Title = "Save Project",
-                SuggestedFileName = "project",
-                DefaultExtension = "cssgen",
-                FileTypeChoices = new[] { ProjectFileType }
-            });
-
-            path = file?.TryGetLocalPath();
-        }
+        var path = _currentFilePath ?? await PromptSaveProjectPathAsync();
 
         if (path is null)
         {
@@ -119,6 +107,32 @@ public partial class MainWindow : Window
 
         ProjectFile.Save(path, _project);
         _currentFilePath = path;
+    }
+
+    private async void SaveAs_Click(object? sender, RoutedEventArgs e)
+    {
+        var path = await PromptSaveProjectPathAsync();
+
+        if (path is null)
+        {
+            return;
+        }
+
+        ProjectFile.Save(path, _project);
+        _currentFilePath = path;
+    }
+
+    private async Task<string?> PromptSaveProjectPathAsync()
+    {
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save Project",
+            SuggestedFileName = "project",
+            DefaultExtension = "cssgen",
+            FileTypeChoices = new[] { ProjectFileType }
+        });
+
+        return file?.TryGetLocalPath();
     }
 
     private async void ExportCss_Click(object? sender, RoutedEventArgs e)
@@ -139,6 +153,26 @@ public partial class MainWindow : Window
         }
 
         File.WriteAllText(path, CssBuilder.Build(_project));
+    }
+
+    private async void ExportMinifiedCss_Click(object? sender, RoutedEventArgs e)
+    {
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Export Minified CSS",
+            SuggestedFileName = "styles.min",
+            DefaultExtension = "css",
+            FileTypeChoices = new[] { CssFileType }
+        });
+
+        var path = file?.TryGetLocalPath();
+
+        if (path is null)
+        {
+            return;
+        }
+
+        File.WriteAllText(path, CssBuilder.BuildMinified(_project));
     }
 
     private void AddClass_Click(object? sender, RoutedEventArgs e)
@@ -258,10 +292,13 @@ public partial class MainWindow : Window
                 ColumnSpacing = 6
             };
 
-            var name = new TextBox
+            var name = new AutoCompleteBox
             {
                 Text = property.Name,
-                PlaceholderText = "property"
+                PlaceholderText = "property",
+                ItemsSource = CssPropertyNames.All,
+                FilterMode = AutoCompleteFilterMode.Contains,
+                MinimumPrefixLength = 1
             };
 
             var value = new TextBox
