@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="CssGenerator.Views.StatsDialog"
+        Width="320"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Title="Project Stats">
+
+    <StackPanel Margin="20" Spacing="10">
+
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="Classes"/>
+            <TextBlock x:Name="ClassCountText" Grid.Column="1" FontWeight="SemiBold"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="Properties"/>
+            <TextBlock x:Name="PropertyCountText" Grid.Column="1" FontWeight="SemiBold"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="HTML snippets"/>
+            <TextBlock x:Name="SnippetCountText" Grid.Column="1" FontWeight="SemiBold"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="External resources"/>
+            <TextBlock x:Name="ResourceCountText" Grid.Column="1" FontWeight="SemiBold"/>
+        </Grid>
+
+        <Button Classes="primary"
+                Content="Close"
+                HorizontalAlignment="Right"
+                Margin="0,10,0,0"
+                Click="Close_Click"/>
+
+    </StackPanel>
+
+</Window>

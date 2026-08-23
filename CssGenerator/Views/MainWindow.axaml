@@ -35,6 +35,7 @@
                 </MenuItem>
                 <MenuItem Header="_View">
                     <MenuItem Header="Open in Browser" Click="OpenPreview_Click"/>
+                    <MenuItem Header="Project Stats..." Click="Stats_Click"/>
                 </MenuItem>
             </Menu>
         </Border>

@@ -242,6 +242,11 @@ public partial class MainWindow : Window
         }
     }
 
+    private void Stats_Click(object? sender, RoutedEventArgs e)
+    {
+        new StatsDialog(_project).ShowDialog(this);
+    }
+
     private void ClassSearchBox_KeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter)
