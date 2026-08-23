@@ -712,16 +712,20 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OpenPreview_Click(object? sender, RoutedEventArgs e)
+    private static readonly string PreviewPath =
+        Path.Combine(Path.GetTempPath(), "cssgenerator-preview.html");
+
+    private string BuildPreviewHtml()
     {
         var resources = string.Join(Environment.NewLine, _project.Resources);
         var body = SnippetResolver.Resolve(HtmlEditor.Text ?? string.Empty, _project);
 
-        var html = $"""
+        return $"""
             <!DOCTYPE html>
             <html>
             <head>
             <meta charset="utf-8">
+            <meta http-equiv="refresh" content="1">
             {resources}
             <style>
             {CssEditor.Text}
@@ -732,14 +736,20 @@ public partial class MainWindow : Window
             </body>
             </html>
             """;
+    }
 
-        var path = Path.Combine(Path.GetTempPath(), "cssgenerator-preview.html");
+    private void OpenPreview_Click(object? sender, RoutedEventArgs e)
+    {
+        File.WriteAllText(PreviewPath, BuildPreviewHtml());
 
-        File.WriteAllText(path, html);
-
-        Process.Start(new ProcessStartInfo(path)
+        Process.Start(new ProcessStartInfo(PreviewPath)
         {
             UseShellExecute = true
         });
+    }
+
+    private void PushPreview_Click(object? sender, RoutedEventArgs e)
+    {
+        File.WriteAllText(PreviewPath, BuildPreviewHtml());
     }
 }

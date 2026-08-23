@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mi="using:Material.Icons.Avalonia"
         x:Class="CssGenerator.Views.MainWindow"
         Icon="/Assets/icon.png"
         Title="CssGenerator"
@@ -19,25 +20,58 @@
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,0,0,1">
 
-            <Menu>
-                <MenuItem Header="_File">
-                    <MenuItem Header="New" InputGesture="Ctrl+N" Click="New_Click"/>
-                    <MenuItem Header="Open" InputGesture="Ctrl+O" Click="Open_Click"/>
-                    <MenuItem Header="Save" InputGesture="Ctrl+S" Click="Save_Click"/>
-                    <MenuItem Header="Save As" InputGesture="Ctrl+Shift+S" Click="SaveAs_Click"/>
-                    <Separator/>
-                    <MenuItem Header="Import CSS" Click="ImportCss_Click"/>
-                    <MenuItem Header="Resources..." Click="Resources_Click"/>
-                </MenuItem>
-                <MenuItem Header="_Export">
-                    <MenuItem Header="Export CSS" Click="ExportCss_Click"/>
-                    <MenuItem Header="Export Minified CSS" Click="ExportMinifiedCss_Click"/>
-                </MenuItem>
-                <MenuItem Header="_View">
-                    <MenuItem Header="Open in Browser" Click="OpenPreview_Click"/>
-                    <MenuItem Header="Project Stats..." Click="Stats_Click"/>
-                </MenuItem>
-            </Menu>
+            <StackPanel>
+                <Menu>
+                    <MenuItem Header="_File">
+                        <MenuItem Header="New" InputGesture="Ctrl+N" Click="New_Click"/>
+                        <MenuItem Header="Open" InputGesture="Ctrl+O" Click="Open_Click"/>
+                        <MenuItem Header="Save" InputGesture="Ctrl+S" Click="Save_Click"/>
+                        <MenuItem Header="Save As" InputGesture="Ctrl+Shift+S" Click="SaveAs_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Import CSS" Click="ImportCss_Click"/>
+                        <MenuItem Header="Resources..." Click="Resources_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="_Export">
+                        <MenuItem Header="Export CSS" Click="ExportCss_Click"/>
+                        <MenuItem Header="Export Minified CSS" Click="ExportMinifiedCss_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="_View">
+                        <MenuItem Header="Open in Browser" Click="OpenPreview_Click"/>
+                        <MenuItem Header="Push to Browser" InputGesture="Ctrl+R" Click="PushPreview_Click"/>
+                        <MenuItem Header="Project Stats..." Click="Stats_Click"/>
+                    </MenuItem>
+                </Menu>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="8,4"
+                            Spacing="4">
+
+                    <Button Classes="toolbar" Click="Save_Click" ToolTip.Tip="Save project (Ctrl+S)">
+                        <mi:MaterialIcon Kind="ContentSave" Width="18" Height="18"/>
+                    </Button>
+
+                    <Button Classes="toolbar" Click="ExportCss_Click" ToolTip.Tip="Export CSS">
+                        <mi:MaterialIcon Kind="FileExport" Width="18" Height="18"/>
+                    </Button>
+
+                    <Button Classes="toolbar" Click="ExportMinifiedCss_Click" ToolTip.Tip="Export Minified CSS">
+                        <mi:MaterialIcon Kind="PackageVariantClosed" Width="18" Height="18"/>
+                    </Button>
+
+                    <Rectangle Width="1"
+                               Margin="4,2"
+                               Fill="{DynamicResource BorderBrush}"/>
+
+                    <Button Classes="toolbar" Click="OpenPreview_Click" ToolTip.Tip="Open in Browser">
+                        <mi:MaterialIcon Kind="OpenInNew" Width="18" Height="18"/>
+                    </Button>
+
+                    <Button Classes="toolbar" Click="PushPreview_Click" ToolTip.Tip="Push to Browser">
+                        <mi:MaterialIcon Kind="Autorenew" Width="18" Height="18"/>
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
         </Border>
 
 
