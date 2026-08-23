@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using CssGenerator.Models;
 using CssGenerator.Services;
@@ -382,7 +383,7 @@ public partial class MainWindow : Window
         {
             var row = new Grid
             {
-                ColumnDefinitions = new ColumnDefinitions("*,*,28"),
+                ColumnDefinitions = new ColumnDefinitions("*,*,24,28"),
                 ColumnSpacing = 6
             };
 
@@ -400,6 +401,22 @@ public partial class MainWindow : Window
                 Text = property.Value,
                 PlaceholderText = "value"
             };
+
+            var swatch = new Border
+            {
+                Width = 24,
+                Height = 24,
+                CornerRadius = new CornerRadius(4),
+                BorderBrush = new SolidColorBrush(Color.Parse("#E3E6EA")),
+                BorderThickness = new Thickness(1),
+                IsVisible = false
+            };
+
+            if (Color.TryParse(property.Value, out var initialColor))
+            {
+                swatch.Background = new SolidColorBrush(initialColor);
+                swatch.IsVisible = true;
+            }
 
             var delete = new Button
             {
@@ -421,6 +438,17 @@ public partial class MainWindow : Window
             value.TextChanged += (_, _) =>
             {
                 property.Value = value.Text ?? string.Empty;
+
+                if (Color.TryParse(property.Value, out var color))
+                {
+                    swatch.Background = new SolidColorBrush(color);
+                    swatch.IsVisible = true;
+                }
+                else
+                {
+                    swatch.IsVisible = false;
+                }
+
                 UpdateCss();
             };
 
@@ -432,10 +460,12 @@ public partial class MainWindow : Window
             };
 
             Grid.SetColumn(value, 1);
-            Grid.SetColumn(delete, 2);
+            Grid.SetColumn(swatch, 2);
+            Grid.SetColumn(delete, 3);
 
             row.Children.Add(name);
             row.Children.Add(value);
+            row.Children.Add(swatch);
             row.Children.Add(delete);
 
             PropertyPanel.Children.Add(row);

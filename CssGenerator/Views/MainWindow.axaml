@@ -9,7 +9,7 @@
         MinHeight="600">
 
     <Grid RowDefinitions="Auto,*"
-          ColumnDefinitions="360,*">
+          ColumnDefinitions="392,*">
 
         <!-- MENU BAR -->
 
