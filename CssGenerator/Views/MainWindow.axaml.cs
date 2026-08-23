@@ -126,6 +126,11 @@ public partial class MainWindow : Window
         CurrentFilePath = path;
     }
 
+    private void Exit_Click(object? sender, RoutedEventArgs e)
+    {
+        Environment.Exit(0);
+    }
+
     private async void SaveAs_Click(object? sender, RoutedEventArgs e)
     {
         var path = await PromptSaveProjectPathAsync();
@@ -288,6 +293,28 @@ public partial class MainWindow : Window
                 existing.Properties = cssClass.Properties;
             }
         }
+
+        UpdateClassList();
+        UpdatePropertyPanel();
+        UpdateCss();
+    }
+
+    private async void CondenseCss_Click(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new ConfirmDialog(
+            "Condense CSS",
+            "This will merge duplicate classes, combine padding/margin into shorthand where all four sides are set, drop duplicate properties, strip units off zero values, and remove empty classes. Continue?");
+
+        var confirmed = await dialog.ShowDialog<bool>(this);
+
+        if (!confirmed)
+        {
+            return;
+        }
+
+        CssCondenser.Condense(_project);
+
+        ClassNameEditor.Text = string.Empty;
 
         UpdateClassList();
         UpdatePropertyPanel();

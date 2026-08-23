@@ -22,20 +22,28 @@
 
             <StackPanel>
                 <Menu>
+
                     <MenuItem Header="_File">
                         <MenuItem Header="New" InputGesture="Ctrl+N" Click="New_Click"/>
                         <MenuItem Header="Open" InputGesture="Ctrl+O" Click="Open_Click"/>
                         <MenuItem Header="Save" InputGesture="Ctrl+S" Click="Save_Click"/>
                         <MenuItem Header="Save As" InputGesture="Ctrl+Shift+S" Click="SaveAs_Click"/>
-                        <Separator/>
-                        <MenuItem Header="Import CSS (Replace)" Click="ImportCss_Click"/>
-                        <MenuItem Header="Import CSS (Append)" Click="ImportCssAppend_Click"/>
+                        <MenuItem Header="Exit" Click="Exit_Click"/>
+                    </MenuItem>
+
+                    <MenuItem Header="_Edit">
+                        <MenuItem Header="Condense CSS..." Click="CondenseCss_Click"/>
                         <MenuItem Header="Resources..." Click="Resources_Click"/>
                     </MenuItem>
-                    <MenuItem Header="_Export">
+
+                    <MenuItem Header="_I/O">
+                        <MenuItem Header="Import CSS (Replace)" Click="ImportCss_Click"/>
+                        <MenuItem Header="Import CSS (Append)" Click="ImportCssAppend_Click"/>
+                        <Separator/>
                         <MenuItem Header="Export CSS" Click="ExportCss_Click"/>
                         <MenuItem Header="Export Minified CSS" Click="ExportMinifiedCss_Click"/>
                     </MenuItem>
+
                     <MenuItem Header="_View">
                         <MenuItem Header="Open in Browser" Click="OpenPreview_Click"/>
                         <MenuItem Header="Push to Browser" InputGesture="Ctrl+R" Click="PushPreview_Click"/>
