@@ -8,7 +8,9 @@ public static class CssImporter
 {
     public static List<CssClass> Parse(string cssText)
     {
-        var parser = new StylesheetParser();
+        var parser = new StylesheetParser(
+            includeUnknownDeclarations: true,
+            tolerateInvalidValues: true);
         var stylesheet = parser.Parse(cssText);
 
         var classes = new List<CssClass>();

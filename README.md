@@ -1,8 +1,7 @@
 # CssGenerator
 
 A small Avalonia (.NET 9) desktop app for hand-building a set of CSS
-classes and previewing them against real HTML, without leaving a
-single window.
+classes and previewing them against real HTML.
 
 ## What it does
 
