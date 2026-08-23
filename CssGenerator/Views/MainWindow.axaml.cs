@@ -507,7 +507,7 @@ public partial class MainWindow : Window
 
         UpdateSnippetList();
 
-        SnippetSelector.SelectedIndex = _project.HtmlSnippets.Count - 1;
+        SnippetSelector.SelectedIndex = _project.HtmlSnippets.IndexOf(snippet);
     }
 
     private void DeleteSnippet_Click(object? sender, RoutedEventArgs e)
@@ -685,6 +685,9 @@ public partial class MainWindow : Window
 
     private void UpdateSnippetList()
     {
+        _project.HtmlSnippets.Sort((a, b) =>
+            string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
+
         var names = new List<string>();
 
         foreach (var snippet in _project.HtmlSnippets)
@@ -712,6 +715,7 @@ public partial class MainWindow : Window
     private void OpenPreview_Click(object? sender, RoutedEventArgs e)
     {
         var resources = string.Join(Environment.NewLine, _project.Resources);
+        var body = SnippetResolver.Resolve(HtmlEditor.Text ?? string.Empty, _project);
 
         var html = $"""
             <!DOCTYPE html>
@@ -724,7 +728,7 @@ public partial class MainWindow : Window
             </style>
             </head>
             <body>
-            {HtmlEditor.Text}
+            {body}
             </body>
             </html>
             """;
