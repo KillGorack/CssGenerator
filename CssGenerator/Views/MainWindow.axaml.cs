@@ -29,6 +29,18 @@ public partial class MainWindow : Window
     private CssProject _project;
     private string? _currentFilePath;
 
+    private string? CurrentFilePath
+    {
+        get => _currentFilePath;
+        set
+        {
+            _currentFilePath = value;
+            Title = value is null
+                ? "CssGenerator"
+                : $"{Path.GetFileName(value)} — CssGenerator";
+        }
+    }
+
     public MainWindow()
     {
         InitializeComponent();
@@ -56,7 +68,7 @@ public partial class MainWindow : Window
     private void New_Click(object? sender, RoutedEventArgs e)
     {
         _project = new CssProject();
-        _currentFilePath = null;
+        CurrentFilePath = null;
 
         ClassNameEditor.Text = string.Empty;
 
@@ -86,7 +98,7 @@ public partial class MainWindow : Window
         }
 
         _project = ProjectFile.Load(path);
-        _currentFilePath = path;
+        CurrentFilePath = path;
 
         ClassNameEditor.Text = string.Empty;
 
@@ -101,7 +113,7 @@ public partial class MainWindow : Window
 
     private async void Save_Click(object? sender, RoutedEventArgs e)
     {
-        var path = _currentFilePath ?? await PromptSaveProjectPathAsync();
+        var path = CurrentFilePath ?? await PromptSaveProjectPathAsync();
 
         if (path is null)
         {
@@ -109,7 +121,7 @@ public partial class MainWindow : Window
         }
 
         ProjectFile.Save(path, _project);
-        _currentFilePath = path;
+        CurrentFilePath = path;
     }
 
     private async void SaveAs_Click(object? sender, RoutedEventArgs e)
@@ -122,7 +134,7 @@ public partial class MainWindow : Window
         }
 
         ProjectFile.Save(path, _project);
-        _currentFilePath = path;
+        CurrentFilePath = path;
     }
 
     private async Task<string?> PromptSaveProjectPathAsync()
