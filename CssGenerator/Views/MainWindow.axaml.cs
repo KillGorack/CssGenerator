@@ -230,6 +230,18 @@ public partial class MainWindow : Window
         UpdateCss();
     }
 
+    private async void Resources_Click(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new ResourcesDialog(_project.Resources);
+
+        var result = await dialog.ShowDialog<List<string>?>(this);
+
+        if (result is not null)
+        {
+            _project.Resources = result;
+        }
+    }
+
     private void ClassSearchBox_KeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter)
@@ -694,11 +706,14 @@ public partial class MainWindow : Window
 
     private void OpenPreview_Click(object? sender, RoutedEventArgs e)
     {
+        var resources = string.Join(Environment.NewLine, _project.Resources);
+
         var html = $"""
             <!DOCTYPE html>
             <html>
             <head>
             <meta charset="utf-8">
+            {resources}
             <style>
             {CssEditor.Text}
             </style>

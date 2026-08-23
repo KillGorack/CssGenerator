@@ -7,4 +7,6 @@ public class CssProject
     public List<CssClass> Classes { get; set; } = new();
 
     public List<HtmlSnippet> HtmlSnippets { get; set; } = new();
+
+    public List<string> Resources { get; set; } = new();
 }

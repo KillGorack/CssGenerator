@@ -27,6 +27,7 @@
                     <MenuItem Header="Save As" InputGesture="Ctrl+Shift+S" Click="SaveAs_Click"/>
                     <Separator/>
                     <MenuItem Header="Import CSS" Click="ImportCss_Click"/>
+                    <MenuItem Header="Resources..." Click="Resources_Click"/>
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <MenuItem Header="Export CSS" Click="ExportCss_Click"/>
