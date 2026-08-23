@@ -163,8 +163,11 @@
         </Style>
 
         <!-- Scrollbars: slim, unobtrusive -->
-        <Style Selector="ScrollBar">
+        <Style Selector="ScrollBar:vertical">
             <Setter Property="MaxWidth" Value="10"/>
+        </Style>
+
+        <Style Selector="ScrollBar:horizontal">
             <Setter Property="MaxHeight" Value="10"/>
         </Style>
     </Application.Styles>

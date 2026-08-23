@@ -28,7 +28,8 @@
                         <MenuItem Header="Save" InputGesture="Ctrl+S" Click="Save_Click"/>
                         <MenuItem Header="Save As" InputGesture="Ctrl+Shift+S" Click="SaveAs_Click"/>
                         <Separator/>
-                        <MenuItem Header="Import CSS" Click="ImportCss_Click"/>
+                        <MenuItem Header="Import CSS (Replace)" Click="ImportCss_Click"/>
+                        <MenuItem Header="Import CSS (Append)" Click="ImportCssAppend_Click"/>
                         <MenuItem Header="Resources..." Click="Resources_Click"/>
                     </MenuItem>
                     <MenuItem Header="_Export">
@@ -110,6 +111,7 @@
                             Padding="8">
 
                         <ListBox x:Name="ClassList"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                                  SelectionChanged="ClassList_SelectionChanged">
 
                             <ListBox.ContextMenu>

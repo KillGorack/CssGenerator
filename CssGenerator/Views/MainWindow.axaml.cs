@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -224,6 +225,69 @@ public partial class MainWindow : Window
         _project.Classes.AddRange(classes);
 
         ClassNameEditor.Text = string.Empty;
+
+        UpdateClassList();
+        UpdatePropertyPanel();
+        UpdateCss();
+    }
+
+    private async void ImportCssAppend_Click(object? sender, RoutedEventArgs e)
+    {
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Import CSS (Append)",
+            AllowMultiple = false,
+            FileTypeFilter = new[] { CssFileType }
+        });
+
+        var path = files.Count > 0 ? files[0].TryGetLocalPath() : null;
+
+        if (path is null)
+        {
+            return;
+        }
+
+        var incoming = CssImporter.Parse(File.ReadAllText(path));
+
+        var clean = new List<CssClass>();
+        var conflicting = new List<CssClass>();
+
+        foreach (var cssClass in incoming)
+        {
+            var exists = _project.Classes.Exists(c =>
+                string.Equals(c.Name, cssClass.Name, StringComparison.OrdinalIgnoreCase));
+
+            (exists ? conflicting : clean).Add(cssClass);
+        }
+
+        var overwrite = false;
+
+        if (conflicting.Count > 0)
+        {
+            var dialog = new AppendConflictDialog(conflicting.Select(c => c.Name));
+
+            var choice = await dialog.ShowDialog<AppendConflictChoice>(this);
+
+            if (choice == AppendConflictChoice.Cancel)
+            {
+                return;
+            }
+
+            overwrite = choice == AppendConflictChoice.Overwrite;
+        }
+
+        _project.Classes.AddRange(clean);
+
+        if (overwrite)
+        {
+            foreach (var cssClass in conflicting)
+            {
+                var existing = _project.Classes.First(c =>
+                    string.Equals(c.Name, cssClass.Name, StringComparison.OrdinalIgnoreCase));
+
+                existing.Properties = cssClass.Properties;
+            }
+        }
 
         UpdateClassList();
         UpdatePropertyPanel();
