@@ -11,6 +11,8 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using CssGenerator.Models;
 using CssGenerator.Services;
 
@@ -27,6 +29,16 @@ public partial class MainWindow : Window
     {
         Patterns = new[] { "*.css" }
     };
+
+    private static readonly DataFormat<CssProperty> PropertyDragFormat =
+        DataFormat.CreateInProcessFormat<CssProperty>("CssGenerator.Property");
+
+    private readonly DispatcherTimer _cssReparseTimer = new()
+    {
+        Interval = TimeSpan.FromMilliseconds(300)
+    };
+
+    private bool _suppressCssUpdate;
 
     private CssProject _project;
     private string? _currentFilePath;
@@ -59,6 +71,12 @@ public partial class MainWindow : Window
         AddPropertyButton.Click += AddProperty_Click;
         HtmlEditor.AddHandler(InputElement.KeyDownEvent, HtmlEditor_KeyDown, RoutingStrategies.Tunnel);
         KeyDown += MainWindow_KeyDown;
+
+        _cssReparseTimer.Tick += (_, _) =>
+        {
+            _cssReparseTimer.Stop();
+            ReparseCssEditor();
+        };
 
         UpdateClassList();
         UpdateCss();
@@ -491,7 +509,7 @@ public partial class MainWindow : Window
         {
             var row = new Grid
             {
-                ColumnDefinitions = new ColumnDefinitions("*,*,24,28"),
+                ColumnDefinitions = new ColumnDefinitions("*,*,24,24,28"),
                 ColumnSpacing = 6
             };
 
@@ -525,6 +543,61 @@ public partial class MainWindow : Window
                 swatch.Background = new SolidColorBrush(initialColor);
                 swatch.IsVisible = true;
             }
+
+            var reorder = new Border
+            {
+                Width = 24,
+                Height = 28,
+                Cursor = new Cursor(StandardCursorType.SizeAll),
+                Child = new TextBlock
+                {
+                    Text = "⋮⋮",
+                    Classes = { "hint" },
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+
+            DragDrop.SetAllowDrop(row, true);
+
+            reorder.PointerPressed += async (_, args) =>
+            {
+                var dataTransfer = new DataTransfer();
+                dataTransfer.Add(DataTransferItem.Create(PropertyDragFormat, property));
+
+                await DragDrop.DoDragDropAsync(args, dataTransfer, DragDropEffects.Move);
+            };
+
+            DragDrop.AddDropHandler(row, (_, args) =>
+            {
+                var dragged = args.DataTransfer.Items
+                    .Select(item => item.TryGetRaw(PropertyDragFormat) as CssProperty)
+                    .FirstOrDefault(p => p is not null);
+
+                if (dragged is null || ReferenceEquals(dragged, property))
+                {
+                    return;
+                }
+
+                var sourceIndex = cssClass.Properties.IndexOf(dragged);
+
+                if (sourceIndex < 0)
+                {
+                    return;
+                }
+
+                var originalTargetIndex = cssClass.Properties.IndexOf(property);
+                var draggingDown = sourceIndex < originalTargetIndex;
+
+                cssClass.Properties.RemoveAt(sourceIndex);
+
+                var targetIndex = cssClass.Properties.IndexOf(property);
+
+                cssClass.Properties.Insert(draggingDown ? targetIndex + 1 : targetIndex, dragged);
+
+                UpdatePropertyPanel();
+                UpdateCss();
+            });
 
             var delete = new Button
             {
@@ -569,20 +642,104 @@ public partial class MainWindow : Window
 
             Grid.SetColumn(value, 1);
             Grid.SetColumn(swatch, 2);
-            Grid.SetColumn(delete, 3);
+            Grid.SetColumn(reorder, 3);
+            Grid.SetColumn(delete, 4);
 
             row.Children.Add(name);
             row.Children.Add(value);
             row.Children.Add(swatch);
+            row.Children.Add(reorder);
             row.Children.Add(delete);
 
             PropertyPanel.Children.Add(row);
         }
     }
 
+    private bool IsFocusWithin(Visual root)
+    {
+        var focused = FocusManager?.GetFocusedElement() as Visual;
+
+        while (focused is not null)
+        {
+            if (ReferenceEquals(focused, root))
+            {
+                return true;
+            }
+
+            focused = focused.GetVisualParent();
+        }
+
+        return false;
+    }
+
     private void UpdateCss()
     {
+        if (_suppressCssUpdate || CssEditor.IsFocused)
+        {
+            return;
+        }
+
         CssEditor.Text = CssBuilder.Build(_project);
+    }
+
+    private void CssEditor_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (_suppressCssUpdate)
+        {
+            return;
+        }
+
+        _cssReparseTimer.Stop();
+        _cssReparseTimer.Start();
+    }
+
+    private void ReparseCssEditor()
+    {
+        if (IsFocusWithin(PropertyPanel))
+        {
+            // user is actively editing a property row for the selected class right now —
+            // don't rebuild the panel out from under them, just try again shortly
+            _cssReparseTimer.Start();
+            return;
+        }
+
+        List<CssClass> parsed;
+
+        try
+        {
+            parsed = CssImporter.Parse(CssEditor.Text ?? string.Empty);
+        }
+        catch
+        {
+            return;
+        }
+
+        _suppressCssUpdate = true;
+
+        try
+        {
+            var selectedName = ClassList.SelectedIndex >= 0 &&
+                                ClassList.SelectedIndex < _project.Classes.Count
+                ? _project.Classes[ClassList.SelectedIndex].Name
+                : null;
+
+            _project.Classes.Clear();
+            _project.Classes.AddRange(parsed);
+
+            UpdateClassList();
+
+            if (selectedName is not null)
+            {
+                ClassList.SelectedIndex = _project.Classes.FindIndex(c =>
+                    string.Equals(c.Name, selectedName, StringComparison.OrdinalIgnoreCase));
+            }
+
+            UpdatePropertyPanel();
+        }
+        finally
+        {
+            _suppressCssUpdate = false;
+        }
     }
 
     private void AddSnippet_Click(object? sender, RoutedEventArgs e)
@@ -816,10 +973,10 @@ public partial class MainWindow : Window
             <html>
             <head>
             <meta charset="utf-8">
-            <meta http-equiv="refresh" content="1">
+            
             {resources}
             <style>
-            {CssEditor.Text}
+            {CssBuilder.Build(_project)}
             </style>
             </head>
             <body>

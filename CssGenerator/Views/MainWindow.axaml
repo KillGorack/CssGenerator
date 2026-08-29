@@ -251,12 +251,13 @@
                     <TextBox x:Name="CssEditor"
                              Grid.Row="0"
                              Classes="code"
-                             IsReadOnly="True"
                              AcceptsReturn="True"
+                             AcceptsTab="True"
                              TextWrapping="NoWrap"
                              VerticalContentAlignment="Top"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
-                             ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                             TextChanged="CssEditor_TextChanged"/>
 
                 </Grid>
 
