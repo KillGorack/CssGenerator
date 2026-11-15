@@ -36,6 +36,23 @@ cd CssGenerator
 dotnet run
 ```
 
+## Installing on Linux
+
+Build the download, then run its installer. No admin rights are needed, and the people using it don't
+need .NET, because it's included:
+
+```
+sh packaging/linux/build_linux.sh
+sh dist/cssgenerator-1.0.0-linux-x86_64/install.sh
+```
+
+This puts the app in `~/.local/opt/cssgenerator`, adds the `cssgenerator` command, and adds
+**CSS Generator** to your applications menu. The download is
+`dist/cssgenerator-<version>-linux-x86_64.tar.gz`. Unpack it anywhere and run `./install.sh`. To upgrade,
+run a newer download's `install.sh`. To remove it, run `./uninstall.sh`.
+
+Building needs the .NET 9 SDK. The version comes from `<Version>` in `CssGenerator/CssGenerator.csproj`.
+
 <img width="1483" height="753" alt="image" src="https://github.com/user-attachments/assets/63430a68-76df-4d81-b8c3-fec31eae526d" />
 
 
